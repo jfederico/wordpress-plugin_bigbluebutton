@@ -4,7 +4,7 @@ Plugin Name: BigBlueButton
 Plugin URI: http://blindsidenetworks.com/integrations/wordpress
 Description: BigBlueButton is an open source web conferencing system. This plugin integrates BigBlueButton into WordPress allowing bloggers to create and manage meeting rooms to interact with their readers. It was developed and is maintained by <a href="http://blindsidenetworks.com/" target="_blank">Blindside Networks</a>. For more information on setting up your own BigBlueButton server or for using an external hosting provider visit <a href= "http://bigbluebutton.org/support" target="_blank">BigBlueButton support</a>.
 
-Version: 1.4.4
+Version: 1.4.3
 Author: Blindside Networks
 Author URI: http://blindsidenetworks.com/
 License: GPLv2 or later
@@ -73,6 +73,41 @@ add_action('admin_menu', 'bigbluebutton_add_pages', 1);
 add_action('admin_init', 'bigbluebutton_admin_init', 1);
 add_action('plugins_loaded', 'bigbluebutton_update' );
 add_action('plugins_loaded', 'bigbluebutton_widget_init' );
+add_action('admin_notices', 'bigbluebutton_update_notice');
+
+/**
+ * Update notice.
+ */
+
+define("BIGBLUEBUTTON_UPDATE_NOTICE_REQUIRED", ['1.4.3','1.4.4','2.0.0']);
+
+function bigbluebutton_update_notice()
+{
+    $screen = get_current_screen();
+    if ($screen->id != 'plugins') {
+        return;
+    }
+    $plugin_updates = get_plugin_updates();
+    foreach($plugin_updates as $plugin => $update) {
+        //if (explode("/", $plugin)[0] === 'bigbluebutton') {
+        $pluginname = strtolower($update->Name);
+        if ($pluginname !== "bigbluebutton") {
+            continue;
+        }
+        $newversion = $update->update->new_version;
+        if (!in_array($newversion, BIGBLUEBUTTON_UPDATE_NOTICE_REQUIRED)) {
+            return;
+        }
+        $upgradenotice = $update->update->upgrade_notice;
+        if ($upgradenotice !== "") {
+            echo "<div class=\"notice notice-warning is-dismissible\">";
+            echo "<p style=\"background-color: #d54e21; padding: 10px; color: #f9f9f9; margin-top: 10px\"><strong>Important Upgrade Notice:</strong>";
+            echo "<p><strong>{$upgradenotice}</strong></p>";
+            echo "</div>";
+        }
+    }
+}
+
 set_error_handler("bigbluebutton_warning_handler", E_WARNING);
 
 
