@@ -74,21 +74,35 @@ add_action('admin_init', 'bigbluebutton_admin_init', 1);
 add_action('plugins_loaded', 'bigbluebutton_update' );
 add_action('plugins_loaded', 'bigbluebutton_widget_init' );
 add_action('admin_notices', 'bigbluebutton_update_notice');
-add_action('in_plugin_update_message-bigbluebutton/bigbluebutton-plugin.php', 'showUpgradeNotification', 10);
+add_action('in_plugin_update_message-bigbluebutton/bigbluebutton-plugin.php', 'showUpgradeNotification');
 
+/**
+ * Upgrade notice.
+ */
 function showUpgradeNotification($currentPluginMetadata, $newPluginMetadata)
 {
+    if (!$newPluginMetadata) {
+        $newPluginMetadata = bigbluebutton_update_metadata($currentPluginMetadata['slug']);
+    }
     // check "upgrade_notice"
-    error_log(json_encode($currentPluginMetadata)); 
-    error_log(json_encode($newPluginMetadata)); 
-        echo '<p style="background-color: #d54e21; padding: 10px; color: #f9f9f9; margin-top: 10px"><strong>Important Upgrade Notice:</strong> ';
-    if (isset($newPluginMetadata) && isset($newPluginMetadata->upgrade_notice) && strlen(trim($newPluginMetadata->upgrade_notice)) > 0) {
-        echo esc_html($newPluginMetadata->upgrade_notice), '</p>';
-   }
+    if (isset($newPluginMetadata->upgrade_notice) && strlen(trim($newPluginMetadata->upgrade_notice)) > 0) {
+        //echo '<br><br><p style="background-color: #d54e21; padding: 10px; color: #f9f9f9; margin-top: 10px">Hello</p>';
+        echo '<div style="background-color: #d54e21; padding: 10px; color: #f9f9f9; margin-top: 10px"><strong>Important Upgrade Notice:</strong> ';
+        echo esc_html(strip_tags($newPluginMetadata->upgrade_notice)), '</div>';
+    }
 }
 
 define("BIGBLUEBUTTON_UPDATE_NOTICE_REQUIRED", ['1.4.3','1.4.4','2.0.0']);
 
+function bigbluebutton_update_metadata($pluginslug)
+{
+    $plugin_updates = get_plugin_updates();
+    foreach($plugin_updates as $update) {
+        if ($update->update->slug === $pluginslug) {
+            return $update->update;
+        }
+    }
+}
 /**
  * Update notice.
  */
@@ -99,21 +113,20 @@ function bigbluebutton_update_notice()
         return;
     }
     $plugin_updates = get_plugin_updates();
-    foreach($plugin_updates as $plugin => $update) {
-        //if (explode("/", $plugin)[0] === 'bigbluebutton') {
-        $pluginname = strtolower($update->Name);
-        if ($pluginname !== "bigbluebutton") {
+    foreach($plugin_updates as $update) {
+        if ($update->update->slug !== "bigbluebutton") {
             continue;
         }
         $newversion = $update->update->new_version;
         if (!in_array($newversion, BIGBLUEBUTTON_UPDATE_NOTICE_REQUIRED)) {
             return;
         }
+        //$upgradenotice = strip_tags($update->update->upgrade_notice);
         $upgradenotice = $update->update->upgrade_notice;
         if ($upgradenotice !== "") {
             echo "<div class=\"notice notice-warning is-dismissible\">";
-            echo "<p style=\"background-color: #d54e21; padding: 10px; color: #f9f9f9; margin-top: 10px\"><strong>Important Upgrade Notice:</strong></p>";
-            echo "<p><strong>{$upgradenotice}</strong></p>";
+            echo "<p style=\"background-color: #d54e21; padding: 10px; color: #f9f9f9; margin-top: 10px\"><strong>Important Upgrade Notice:</strong>";
+            echo "<br><strong>{$upgradenotice}</strong></p>";
             echo "</div>";
         }
     }
