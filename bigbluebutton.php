@@ -9,14 +9,14 @@
  * that starts the plugin.
  *
  * @link              https://blindsidenetworks.com
- * @since             3.0.0
+ * @since             3.0.0.a2
  * @package           Bigbluebutton
  *
  * @wordpress-plugin
  * Plugin Name:       BigBlueButton
  * Plugin URI:        https://github.com/blindsidenetworks/wordpress-plugin_bigbluebutton
- * Description:       BigBlueButton is an open source web conferencing system. This plugin integrates BigBlueButton into WordPress allowing bloggers to create and manage meetings rooms by using a Custom Post Type. For more information on setting up your own BigBlueButton server or for using an external hosting provider visit http://bigbluebutton.org/support.
- * Version:           3.0.1
+ * Description:       BigBlueButton is an open source web conferencing system. This plugin integrates BigBlueButton into WordPress allowing bloggers to create and manage meetings rooms by using a Custom Post Type. For more information on setting up your own BigBlueButton server or for using an external hosting provider visit <a href="https://bigbluebutton.org/support">BigBlueButton Support</a>.
+ * Version:           3.0.0.a2
  * Author:            Blindside Networks
  * Author URI:        https://blindsidenetworks.com
  * License:           GPL-2.0+
@@ -35,7 +35,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 3.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'BIGBLUEBUTTON_VERSION', '3.0.1' );
+define( 'BIGBLUEBUTTON_VERSION', '3.0.0.a2' );
 
 /**
  * The code that runs during plugin activation.
